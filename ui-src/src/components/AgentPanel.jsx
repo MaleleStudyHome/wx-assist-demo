@@ -50,7 +50,20 @@ function PhoneFrame({ chatRef, children, inputHint }) {
         <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-[16px] z-[100]" />
         <div className="h-12 px-7 pt-4 flex justify-between text-[#1a1a1a] text-[15px] font-semibold shrink-0 z-50">
           <span>15:42</span>
-          <span className="text-xs">5G 88</span>
+          <span className="text-xs flex items-center gap-1.5">
+            <svg width="14" height="10" viewBox="0 0 14 10">
+              <rect x="0.5" y="6" width="2.5" height="3.5" rx="0.6" fill="#1a1a1a"/>
+              <rect x="3.5" y="4" width="2.5" height="5.5" rx="0.6" fill="#1a1a1a"/>
+              <rect x="6.5" y="2" width="2.5" height="7.5" rx="0.6" fill="#1a1a1a"/>
+              <rect x="9.5" y="0" width="2.5" height="9.5" rx="0.6" fill="#1a1a1a" opacity="0.2"/>
+            </svg>
+            <span style="font-size:11px;font-weight:600;">5G</span>
+            <svg width="20" height="11" viewBox="0 0 20 11">
+              <rect x="0.5" y="1" width="15" height="8.5" rx="2" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+              <rect x="2" y="2.5" width="12" height="5.5" rx="1" fill="#1a1a1a"/>
+              <path d="M16.5 3.5 L18.5 3.5 L18.5 7.5 L16.5 7.5" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+            </svg>
+          </span>
         </div>
         <div className="h-[52px] flex items-center justify-between px-4 border-b border-black/[0.08] shrink-0 bg-[#ededed]">
           <span className="text-[26px] text-black font-light leading-none">‹</span>
@@ -230,10 +243,26 @@ export default function AgentPanel() {
   const chatRef = useRef(null)
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/ilink/status`)
-      .then(r => r.json())
-      .then(d => setIlinkBound(d.bound === true))
-      .catch(() => setIlinkBound(false))
+    async function check() {
+      try {
+        // 1. sessionStorage 优先（ConfigPanel 绑定后存在这里）
+        const saved = sessionStorage.getItem('ilink_account')
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          if (parsed && parsed.bot_token) {
+            setIlinkBound(true)
+            return
+          }
+        }
+        // 2. 回退到 API 检测
+        const res = await fetch(`${API_BASE}/api/ilink/status`)
+        const d = await res.json()
+        setIlinkBound(d.bound === true)
+      } catch {
+        setIlinkBound(false)
+      }
+    }
+    check()
   }, [])
 
   useEffect(() => {
