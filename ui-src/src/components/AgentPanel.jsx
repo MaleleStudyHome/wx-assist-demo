@@ -57,11 +57,11 @@ function PhoneFrame({ chatRef, children, inputHint }) {
               <rect x="6.5" y="2" width="2.5" height="7.5" rx="0.6" fill="#1a1a1a"/>
               <rect x="9.5" y="0" width="2.5" height="9.5" rx="0.6" fill="#1a1a1a" opacity="0.2"/>
             </svg>
-            <span style="font-size:11px;font-weight:600;">5G</span>
+            <span style={{fontSize:'11px',fontWeight:600}}>5G</span>
             <svg width="20" height="11" viewBox="0 0 20 11">
-              <rect x="0.5" y="1" width="15" height="8.5" rx="2" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+              <rect x="0.5" y="1" width="15" height="8.5" rx="2" fill="none" stroke="#1a1a1a" strokeWidth="1"/>
               <rect x="2" y="2.5" width="12" height="5.5" rx="1" fill="#1a1a1a"/>
-              <path d="M16.5 3.5 L18.5 3.5 L18.5 7.5 L16.5 7.5" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+              <path d="M16.5 3.5 L18.5 3.5 L18.5 7.5 L16.5 7.5" fill="none" stroke="#1a1a1a" strokeWidth="1" strokeLinejoin="round"/>
             </svg>
           </span>
         </div>
