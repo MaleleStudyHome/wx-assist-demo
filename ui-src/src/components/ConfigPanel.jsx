@@ -636,6 +636,7 @@ function PushSection() {
   const [qrStatus, setQrStatus] = useState('')
   const [testResult, setTestResult] = useState('')
   const [testingPush, setTestingPush] = useState(false)
+  const [timeoutCount, setTimeoutCount] = useState(0)
   const [unbindConfirm, setUnbindConfirm] = useState(false)
   const [pushHistory, setPushHistory] = useState([])
   const [pushHistoryLoading, setPushHistoryLoading] = useState(false)
@@ -770,7 +771,7 @@ function PushSection() {
     try {
       // 超时控制：iLink 推送需要用户先主动发消息激活，否则会一直挂起
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 25000)
+      const timeoutId = setTimeout(() => controller.abort(), 6000)
       const res = await fetch(`${API_BASE}/api/ilink/test-push`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -781,12 +782,14 @@ function PushSection() {
       const data = await res.json()
       if (data.ok) {
         setTestResult('success')
+        setTimeoutCount(0)
       } else {
         setTestResult(data.error || '推送失败')
       }
     } catch (e) {
       if (e.name === 'AbortError') {
         setTestResult('timeout')
+        setTimeoutCount(prev => prev + 1)
       } else {
         setTestResult('网络请求失败')
       }
@@ -889,9 +892,13 @@ function PushSection() {
               <div className="flex items-start gap-2.5 p-3 bg-status-warn-soft border border-status-warn/20 rounded-xl">
                 <span className="text-base leading-none flex-shrink-0 mt-0.5">⚠️</span>
                 <div className="text-xs leading-relaxed">
-                  <p className="font-semibold text-status-warn mb-1">推送超时 — 通道未激活</p>
+                  <p className="font-semibold text-status-warn mb-1">
+                    {timeoutCount >= 6 ? '多次超时 — 通道可能未激活' : '推送超时 — 通道未激活'}
+                  </p>
                   <p className="text-text-muted">
-                    请在微信里向 Bot <b className="text-text-main">主动发送一条消息</b>（例如「你好」）激活推送通道，然后再次点击「发送测试消息」。
+                    {timeoutCount >= 6
+                      ? '请确认已发送激活消息，或重新扫码绑定'
+                      : '请在微信里向 Bot 主动发送一条消息（例如「你好」）激活推送通道，然后再次点击「发送测试消息」。'}
                   </p>
                 </div>
               </div>
