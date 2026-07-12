@@ -19,6 +19,7 @@ const features = [
   { icon: '📋', title: '群聊摘要', desc: 'AI 自动总结聊天要点' },
   { icon: '🔔', title: '关键词提醒', desc: '关键消息实时推送微信' },
   { icon: '⏰', title: '定时摘要', desc: 'Cron 调度 + 可推送微信' },
+  { icon: '⚡', title: 'AI Agent', desc: '一句话自动执行 + RAG 语义检索' },
   { icon: '📰', title: '公众号摘要', desc: '按分组定时汇总' },
   { icon: '⭐', title: '收藏导出', desc: '标签筛选 + 全文搜索 + 一键导出' },
 ]

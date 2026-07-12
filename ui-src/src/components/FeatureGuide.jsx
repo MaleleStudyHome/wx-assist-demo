@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChartLine, Gear, ChatCircleDots, Chats, Star, Eye, Newspaper, Scroll,
-  X, ArrowLeft, ArrowRight, Sparkle, CircleDashed, Phone
+  X, ArrowLeft, ArrowRight, Sparkle, CircleDashed, Phone, Lightning
 } from '@phosphor-icons/react'
 
 /* ───────────────────────────────────────────────
@@ -16,11 +16,12 @@ const DESKTOP_CARD_POS = [
   { bottom: '40px', right: '40px', transform: 'none' },          // 2 config
   { bottom: '40px', right: '40px', transform: 'none' },          // 3 push
   { bottom: '40px', left: '260px', transform: 'none' },          // 4 assistant
-  { bottom: '40px', left: '260px', transform: 'none' },          // 5 chats
-  { bottom: '40px', left: '260px', transform: 'none' },          // 6 favorites
-  { bottom: '40px', left: '260px', transform: 'none' },          // 7 moments
-  { bottom: '40px', right: '40px', transform: 'none' },          // 8 oa
-  { bottom: '40px', left: '260px', transform: 'none' },          // 9 logs
+  { bottom: '40px', left: '260px', transform: 'none' },          // 5 agent
+  { bottom: '40px', left: '260px', transform: 'none' },          // 6 chats
+  { bottom: '40px', left: '260px', transform: 'none' },          // 7 favorites
+  { bottom: '40px', left: '260px', transform: 'none' },          // 8 moments
+  { bottom: '40px', right: '40px', transform: 'none' },          // 9 oa
+  { bottom: '40px', left: '260px', transform: 'none' },          // 10 logs
 ]
 
 const MOBILE_CARD_POS = { bottom: '0', left: '0', right: '0', transform: 'none' }
@@ -71,6 +72,15 @@ const GUIDE_STEPS = [
     desc: '关键词提醒 + 定时 AI 摘要 + 公众号即时提醒。每个群独立配置，可推送到微信。',
     features: ['关键词提醒', '定时 AI 摘要', '微信推送'],
     highlights: ['hl-kw', 'hl-digest'],
+    drawer: null,
+  },
+  {
+    tabId: 'agent',
+    icon: Lightning,
+    title: 'AI Agent',
+    desc: '一句话查状态、配摘要、搜记忆——在微信里直接跟 Agent 对话，自动拆解执行。',
+    features: ['信息查询', '自动执行', '语义检索 RAG'],
+    highlights: [],
     drawer: null,
   },
   {
@@ -586,6 +596,112 @@ function LogsPage() {
   )
 }
 
+/* ── AgentPage: light theme iPhone mockup ──────────────────── */
+function AgentPage() {
+  return (
+    <div className="animate-[pageIn_0.4s_cubic-bezier(0.16,1,0.3,1)_forwards] flex flex-col md:flex-row gap-4 md:gap-12 items-center p-4 md:px-24 md:py-5 justify-start">
+      {/* Left: feature list */}
+      <div className="flex flex-col gap-3.5 w-full md:w-[220px] shrink-0">
+        <div className="bg-bg-card border border-border-main rounded-[14px] p-3.5">
+          <div className="text-[13px] font-bold mb-2.5 flex items-center gap-1.5">
+            <Lightning size={16} className="text-brand-green" weight="fill" />
+            AI Agent
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 p-2.5 bg-bg-raised rounded-lg text-xs">
+              <span className="text-base">📖</span>
+              <span className="text-text-main font-medium">信息查询</span>
+              <span className="ml-auto text-[10px] text-text-muted">系统状态·会话·记忆</span>
+            </div>
+            <div className="flex items-center gap-2 p-2.5 bg-bg-raised rounded-lg text-xs">
+              <span className="text-base">🛠️</span>
+              <span className="text-text-main font-medium">自动执行</span>
+              <span className="ml-auto text-[10px] text-text-muted">摘要·预警·推送</span>
+            </div>
+            <div className="flex items-center gap-2 p-2.5 bg-bg-raised rounded-lg text-xs">
+              <span className="text-base">🔍</span>
+              <span className="text-text-main font-medium">语义检索 RAG</span>
+              <span className="ml-auto text-[10px] text-text-muted">向量·跨源关联</span>
+            </div>
+          </div>
+        </div>
+        <div className="bg-bg-card border border-border-main rounded-[14px] p-3.5">
+          <div className="text-[13px] font-bold mb-2 flex items-center gap-1.5">
+            <span className="text-base">💡</span>
+            一句话体验
+          </div>
+          <p className="text-[11px] text-text-muted leading-relaxed">
+            点击下方命令，在手机模拟器中查看 Agent 的自动执行过程
+          </p>
+        </div>
+      </div>
+
+      {/* Right: Phone frame — light mode (matches PushPage) */}
+      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
+        <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-[16px] z-[100]" />
+        <div className="h-12 px-7 pt-4 flex justify-between text-[#1a1a1a] text-[15px] font-semibold shrink-0 z-50">
+          <span>15:42</span>
+          <span className="text-xs">5G 88</span>
+        </div>
+        <div className="h-[52px] flex items-center justify-between px-4 border-b border-black/[0.08] shrink-0 bg-[#ededed]">
+          <span className="text-[26px] text-black font-light leading-none">‹</span>
+          <div className="text-[17px] font-semibold text-[#1a1a1a] flex items-center gap-1.5 tracking-[0.3px]">
+            摘星 Agent
+            <div className="bg-[#d5d5d5] text-[#555] text-[11px] font-bold py-0.5 px-1.5 rounded">AI</div>
+          </div>
+          <div className="flex gap-1 items-center px-1 py-2.5">
+            <div className="w-[5px] h-[5px] rounded-full bg-black" />
+            <div className="w-[5px] h-[5px] rounded-full bg-black" />
+            <div className="w-[5px] h-[5px] rounded-full bg-black" />
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto p-[18px_14px] flex flex-col gap-3.5 bg-[#ededed] text-[15px]" style={{ scrollbarWidth: 'none' }}>
+          <div className="text-center text-xs text-[#888] my-1 tracking-[0.3px]">今天 10:15</div>
+          <div className="flex gap-2.5 items-start">
+            <div className="w-[42px] h-[42px] rounded-lg bg-[#ef4545] shrink-0 flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(239,69,68,0.25)]">
+              <div className="w-[9px] h-[9px] bg-white rounded-full" />
+              <div className="w-[9px] h-[9px] bg-white rounded-full" />
+            </div>
+            <div>
+              <div className="relative bg-white text-[#1a1a1a] text-[15px] p-[13px_15px] rounded-lg leading-[1.55] max-w-[78%] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                👋 你好呀～我是摘星，你的微信智能助手！<br /><br />
+                我能帮你做这些事：<br />
+                📝 一句话生成群聊摘要、配置定时推送<br />
+                🔔 设置公众号文章实时提醒<br />
+                🔍 语义搜索——说个大概意思，帮你翻记忆
+              </div>
+            </div>
+          </div>
+          {/* Three command hints */}
+          <div className="flex flex-col gap-2 mt-2 px-1">
+            <div className="flex items-center gap-2.5 p-3 bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/[0.04] text-sm text-[#333] cursor-pointer hover:bg-[#f7f7f7] transition-colors">
+              <span>📝</span>
+              <span>帮我总结一下工作群今天都说了什么</span>
+            </div>
+            <div className="flex items-center gap-2.5 p-3 bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/[0.04] text-sm text-[#333] cursor-pointer hover:bg-[#f7f7f7] transition-colors">
+              <span>🔔</span>
+              <span>帮我设置 36氪 的文章实时提醒</span>
+            </div>
+            <div className="flex items-center gap-2.5 p-3 bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/[0.04] text-sm text-[#333] cursor-pointer hover:bg-[#f7f7f7] transition-colors">
+              <span>🔍</span>
+              <span>我记得之前有人讨论过用 Redis 做缓存...</span>
+            </div>
+          </div>
+        </div>
+        <div className="h-14 bg-[#f7f7f7] border-t border-black/[0.06] flex items-center px-3 gap-2.5 shrink-0">
+          <svg viewBox="0 0 24 24" width="26" height="26" stroke="#1a1a1a" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>
+          <div className="flex-1 h-10 bg-white rounded-md flex items-center px-3 text-[#1a1a1a] text-[15px] border border-black/[0.08]" />
+          <svg viewBox="0 0 256 256" width="24" height="24" fill="none" stroke="#1a1a1a" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><circle cx="128" cy="128" r="40" /><path d="M128 80v-8M128 184v-8M80 128h-8M184 128h-8" /></svg>
+          <div className="w-[30px] h-[30px] rounded-full border-[1.5px] border-[#1a1a1a] flex items-center justify-center text-[#1a1a1a] font-bold text-base shrink-0">＋</div>
+        </div>
+        <div className="h-[22px] bg-[#f7f7f7] flex justify-center items-end pb-1.5 shrink-0">
+          <div className="w-[130px] h-[5px] bg-black rounded-[100px]" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* Map tabId to mock page component */
 const MOCK_PAGES = {
   welcome: WelcomePage,
@@ -593,6 +709,7 @@ const MOCK_PAGES = {
   config: ConfigPage,
   push: PushPage,
   assistant: AssistantPage,
+  agent: AgentPage,
   chats: ChatsPage,
   favorites: FavoritesPage,
   moments: MomentsPage,
@@ -602,6 +719,7 @@ const MOCK_PAGES = {
 
 const TAB_LABELS = {
   welcome: '欢迎', dashboard: '运行状态', config: '系统配置', push: '微信推送', assistant: '群聊助手',
+  agent: 'AI Agent',
   chats: '会话管理', favorites: '收藏助手', moments: '朋友圈助手', oa: '公众号助手', logs: '运行日志',
 }
 

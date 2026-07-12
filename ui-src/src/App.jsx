@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Gear, ChartLine, Scroll, Spinner, Sun, Moon, ChatCircleDots, Star, Eye, Newspaper, Chats, PaperPlaneTilt, List, X } from '@phosphor-icons/react'
+import { Gear, ChartLine, Scroll, Spinner, Sun, Moon, ChatCircleDots, Star, Eye, Newspaper, Chats, PaperPlaneTilt, List, X, Lightning } from '@phosphor-icons/react'
 import { API_BASE } from './components/SharedComponents'
 import Dashboard from './components/Dashboard'
 import ConfigPanel from './components/ConfigPanel'
@@ -11,6 +11,7 @@ import FavoritesTab from './components/FavoritesTab'
 import MomentsTab from './components/MomentsTab'
 import OATab from './components/OATab'
 import ChatTab from './components/ChatTab'
+import AgentPanel from './components/AgentPanel'
 import FeatureGuide from './components/FeatureGuide'
 import { AmbientWaveBackground } from './components/AmbientBackground'
 
@@ -29,6 +30,7 @@ const TABS = [
     ],
   },
   { id: 'assistant', label: '群聊助手', icon: ChatCircleDots },
+  { id: 'agent', label: 'AI Agent', icon: Lightning },
   { id: 'chats', label: '会话管理', icon: Chats },
   { id: 'favorites', label: '收藏助手', icon: Star },
   { id: 'moments', label: '朋友圈助手', icon: Eye },
@@ -246,6 +248,7 @@ export default function App() {
                 {activeTab === 'dashboard' && <Dashboard status={status} />}
                 {activeTab === 'config' && <ConfigPanel activeSection={configSection} onNavigate={setConfigSection} />}
                 {activeTab === 'assistant' && <AssistantPanel />}
+                {activeTab === 'agent' && <AgentPanel />}
                 {activeTab === 'chats' && <ChatTab />}
                 {activeTab === 'favorites' && <FavoritesTab />}
                 {activeTab === 'moments' && <MomentsTab />}
