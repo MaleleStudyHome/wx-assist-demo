@@ -168,6 +168,12 @@ body {
   30% { opacity: 1; }
 }
 
+/* Typing bounce for Agent phone mockup */
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
 /* Ping animation for welcome badge dot */
 @keyframes ping {
   0% { transform: scale(1); opacity: 0.6; }
@@ -211,6 +217,9 @@ body {
 }
 @utility animate-dashboard-glow {
   animation: dashboardGlow 8s ease-in-out infinite;
+}
+@utility animate-typingBounce {
+  animation: typingBounce 1s infinite;
 }
 
 /* Reduced motion: disable all guide + dashboard animations */
