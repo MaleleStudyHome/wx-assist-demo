@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChartLine, Gear, ChatCircleDots, Chats, Star, Eye, Newspaper, Scroll,
-  X, ArrowLeft, ArrowRight, Sparkle, CircleDashed, Phone, Lightning
+  X, ArrowLeft, ArrowRight, Sparkle, CircleDashed, Phone, Lightning, PuzzlePiece
 } from '@phosphor-icons/react'
 
 /* ───────────────────────────────────────────────
@@ -21,7 +21,8 @@ const DESKTOP_CARD_POS = [
   { bottom: '40px', left: '260px', transform: 'none' },          // 7 favorites
   { bottom: '40px', left: '260px', transform: 'none' },          // 8 moments
   { bottom: '40px', right: '40px', transform: 'none' },          // 9 oa
-  { bottom: '40px', left: '260px', transform: 'none' },          // 10 logs
+  { bottom: '40px', right: '40px', transform: 'none' },          // 10 mcp
+  { bottom: '40px', left: '260px', transform: 'none' },          // 11 logs
 ]
 
 const MOBILE_CARD_POS = { bottom: '0', left: '0', right: '0', transform: 'none' }
@@ -120,6 +121,15 @@ const GUIDE_STEPS = [
     desc: '分组 + 定时 AI 摘要 + 即时提醒。多种领域模板，一键简报。',
     features: ['公众号分组', '多种摘要模板', '即时提醒'],
     highlights: ['hl-group', 'hl-template', 'hl-oa-monitor'],
+    drawer: null,
+  },
+  {
+    tabId: 'mcp',
+    icon: PuzzlePiece,
+    title: 'MCP 工具扩展',
+    desc: '通过 MCP 工具给 Agent 装上"超能力"——读文件、搜资讯、查天气……即插即用，持续扩展。',
+    features: ['文件系统操作', '资讯订阅聚合', '网页搜索查询'],
+    highlights: [],
     drawer: null,
   },
   {
@@ -884,6 +894,262 @@ function AgentPage() {
   )
 }
 
+/* ── MCPPage: interactive MCP tool demo ── */
+function MCPPage() {
+  const [scene, setScene] = useState(null)
+  const [typing, setTyping] = useState(false)
+  const chatRef = useRef(null)
+
+  useEffect(() => {
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight
+  }, [scene, typing])
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms))
+
+  async function handleClick(id) {
+    setScene(id)
+    setTyping(true)
+    await sleep(1200)
+    setTyping(false)
+  }
+
+  function reset() { setScene(null); setTyping(false) }
+
+  const btnClass = (id) =>
+    `flex items-center gap-2.5 p-3 bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/[0.04] text-sm text-[#333] cursor-pointer hover:bg-[#f7f7f7] transition-all ${scene === id ? 'ring-2 ring-[#07c160] ring-offset-1' : ''}`
+
+  return (
+    <div className="animate-[pageIn_0.4s_cubic-bezier(0.16,1,0.3,1)_forwards] flex flex-col md:flex-row gap-4 md:gap-12 items-center p-4 md:px-24 md:py-5 justify-start">
+      <div className="flex flex-col gap-3.5 w-full md:w-[220px] shrink-0">
+        <div className="bg-bg-card border border-border-main rounded-[14px] p-3.5">
+          <div className="text-[13px] font-bold mb-2.5 flex items-center gap-1.5">
+            <PuzzlePiece size={16} className="text-brand-green" weight="fill" />
+            MCP 工具 = Agent 的"超能力"
+          </div>
+          <p className="text-[11px] text-text-muted leading-relaxed mb-3">
+            MCP 让 Agent 获得调用外部工具的能力——读取文件、订阅资讯、网络搜索，持续扩展。
+          </p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 p-2.5 bg-brand-green/5 rounded-lg text-xs border border-brand-green/10">
+              <PuzzlePiece size={14} className="text-brand-green" />
+              <div><span className="text-text-main font-medium">即插即用</span><br /><span className="text-text-muted">按需添加 MCP 服务器</span></div>
+            </div>
+            <div className="flex items-center gap-2 p-2.5 bg-brand-green/5 rounded-lg text-xs border border-brand-green/10">
+              <Lightning size={14} className="text-brand-green" />
+              <div><span className="text-text-main font-medium">Agent 自动调用</span><br /><span className="text-text-muted">理解意图 → 调用工具 → 返回结果</span></div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-bg-card border border-border-main rounded-[14px] p-3.5">
+          <div className="text-[13px] font-bold mb-2">选择场景体验</div>
+          <p className="text-[11px] text-text-muted leading-relaxed mb-2">点击下方场景，查看 Agent 如何调用 MCP 工具</p>
+          {(scene || typing) && (
+            <button onClick={reset}
+              className="mt-2 text-[10px] px-2.5 py-1 rounded-full bg-bg-raised border border-border-main text-text-muted hover:text-text-main transition-colors cursor-pointer">{'\u{27F2}'} 重置</button>
+          )}
+        </div>
+      </div>
+      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
+        <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-[16px] z-[100]" />
+        <div className="h-12 px-7 pt-4 flex justify-between text-[#1a1a1a] text-[15px] font-semibold shrink-0 z-50">
+          <span>15:42</span>
+          <span className="text-xs flex items-center gap-1.5">
+            <svg width="14" height="10" viewBox="0 0 14 10"><rect x="0.5" y="6" width="2.5" height="3.5" rx="0.6" fill="#1a1a1a"/><rect x="3.5" y="4" width="2.5" height="5.5" rx="0.6" fill="#1a1a1a"/><rect x="6.5" y="2" width="2.5" height="7.5" rx="0.6" fill="#1a1a1a"/><rect x="9.5" y="0" width="2.5" height="9.5" rx="0.6" fill="#1a1a1a" opacity="0.2"/></svg>
+            <span style={{fontSize:'11px',fontWeight:600}}>5G</span>
+            <svg width="20" height="11" viewBox="0 0 20 11"><rect x="0.5" y="1" width="15" height="8.5" rx="2" fill="none" stroke="#1a1a1a" strokeWidth="1"/><rect x="2" y="2.5" width="12" height="5.5" rx="1" fill="#1a1a1a"/><path d="M16.5 3.5 L18.5 3.5 L18.5 7.5 L16.5 7.5" fill="none" stroke="#1a1a1a" strokeWidth="1" strokeLinejoin="round"/></svg>
+          </span>
+        </div>
+        <div className="h-[52px] flex items-center justify-between px-4 border-b border-black/[0.08] shrink-0 bg-[#ededed]">
+          <span className="text-[26px] text-black font-light leading-none">{'\u{2039}'}</span>
+          <div className="text-[17px] font-semibold text-[#1a1a1a] flex items-center gap-1.5 tracking-[0.3px]">
+            摘星 Agent
+            <div className="bg-[#07c160] text-white text-[10px] font-bold py-0.5 px-1.5 rounded">MCP</div>
+          </div>
+          <div className="flex gap-1 items-center px-1 py-2.5">
+            <div className="w-[5px] h-[5px] rounded-full bg-black" />
+            <div className="w-[5px] h-[5px] rounded-full bg-black" />
+            <div className="w-[5px] h-[5px] rounded-full bg-black" />
+          </div>
+        </div>
+        <div ref={chatRef} className="flex-1 overflow-y-auto p-[18px_14px] flex flex-col gap-3.5 bg-[#ededed] text-[15px]" style={{ scrollbarWidth: 'none' }}>
+          {!scene && !typing && (
+            <>
+              <div className="text-center text-xs text-[#888] my-1 tracking-[0.3px]">今天 15:42</div>
+              <div className="flex gap-2.5 items-start">
+                <div className="w-[42px] h-[42px] rounded-lg bg-[#ef4545] shrink-0 flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(239,69,68,0.25)]">
+                  <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                  <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                </div>
+                <div>
+                  <div className="relative bg-white text-[#1a1a1a] text-[15px] p-[13px_15px] rounded-lg leading-[1.55] max-w-[78%] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                    你好～我是摘星，Agent 启用了 MCP 工具扩展，能帮你做更多事：<br /><br />试试下面对话 👇
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 mt-2 px-1">
+                <button onClick={() => handleClick('file')} className={btnClass('file')}>
+                  <span style={{fontSize:'11px',fontWeight:700,color:'#07c160'}}>文件</span>
+                  <span>读取桌面上的会议记录文件</span>
+                </button>
+                <button onClick={() => handleClick('rss')} className={btnClass('rss')}>
+                  <span style={{fontSize:'11px',fontWeight:700,color:'#07c160'}}>订阅</span>
+                  <span>订阅 AI 行业的最新资讯</span>
+                </button>
+                <button onClick={() => handleClick('search')} className={btnClass('search')}>
+                  <span style={{fontSize:'11px',fontWeight:700,color:'#07c160'}}>天气</span>
+                  <span>查一下这周末深圳的天气情况</span>
+                </button>
+              </div>
+            </>
+          )}
+          {typing && (
+            <>
+              <div className="flex gap-2.5 items-start flex-row-reverse">
+                <div className="w-[42px] h-[42px] rounded-lg shrink-0 bg-[#ef4545] flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(239,69,68,0.25)]">
+                  <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                  <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                </div>
+                <div>
+                  <div className="relative bg-[#95ec69] text-[#1a1a1a] text-[15px] p-[13px_15px] rounded-lg leading-[1.55] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                    {scene === 'file' ? '读取桌面上的会议记录文件' : scene === 'rss' ? '订阅 AI 行业的最新资讯' : '查一下这周末深圳的天气情况'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2.5 items-start">
+                <div className="w-[42px] h-[42px] rounded-lg bg-[#ef4545] shrink-0 flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(239,69,68,0.25)]">
+                  <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                  <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                </div>
+                <div>
+                  <div className="relative bg-white text-[#1a1a1a] text-[15px] p-[13px_15px] rounded-lg leading-[1.55] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                    <div className="flex gap-1.5 items-center">
+                      <span className="w-[7px] h-[7px] rounded-full bg-[#aaa] animate-typingBounce" />
+                      <span className="w-[7px] h-[7px] rounded-full bg-[#aaa] animate-typingBounce" style={{ animationDelay: '0.15s' }} />
+                      <span className="w-[7px] h-[7px] rounded-full bg-[#aaa] animate-typingBounce" style={{ animationDelay: '0.3s' }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+          {scene === 'file' && !typing && (
+            <div className="flex gap-2.5 items-start">
+              <div className="w-[42px] h-[42px] rounded-lg bg-[#ef4545] shrink-0 flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(239,69,68,0.25)]">
+                <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                <div className="w-[9px] h-[9px] bg-white rounded-full" />
+              </div>
+              <div className="max-w-[82%]">
+                <div className="relative bg-white text-[#1a1a1a] text-[15px] p-[13px_15px] rounded-lg leading-[1.55] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                  <div className="text-sm font-semibold text-[#07c160] mb-2">{'\u{2705}'} 已读取会议记录文件</div>
+                  <div className="bg-[#f7f7f7] rounded-lg p-3 text-sm border border-black/[0.04]">
+                    <div className="font-semibold mb-1">会议纪要 · 项目周会</div>
+                    <div className="text-[#555] text-[13px]">参与人：张三、李四、王五<br />时间：2026年7月22日 14:00</div>
+                    <div className="mt-2 text-[13px]">要点：<br />· Q3 产品路线图确认<br />· 8 月中旬上线，本周五前联调<br />· 预算方案已通过</div>
+                    <div className="mt-2 pt-2 text-[12px] text-[#888] border-t border-dashed border-black/[0.06]">待办：张三协调前端资源，李四周四前提测</div>
+                  </div>
+                  <div className="mt-2.5 p-2 bg-[#f0fdf4] border border-[#07c160]/20 rounded-lg">
+                    <div className="text-[9px] font-semibold text-[#07c160]/60 uppercase tracking-[0.5px] flex items-center gap-1 mb-1">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#07c160" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 本次调用的工具
+                    </div>
+                    <div className="flex items-center gap-2 text-[12px] font-mono">
+                      <span className="px-2 py-0.5 rounded bg-[#07c160]/10 text-[#07c160] font-bold">{'\u{1F4C1}'} 文件系统</span>
+                      <span className="text-black/[0.15]">→</span>
+                      <span className="px-2 py-0.5 rounded bg-black/[0.04] text-[#555]">read_text_file</span>
+                      <span className="text-black/[0.2] text-[11px]">· path: 桌面/会议记录.txt</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {scene === 'rss' && !typing && (
+            <div className="flex gap-2.5 items-start">
+              <div className="w-[42px] h-[42px] rounded-lg bg-[#ef4545] shrink-0 flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(239,69,68,0.25)]">
+                <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                <div className="w-[9px] h-[9px] bg-white rounded-full" />
+              </div>
+              <div className="max-w-[82%]">
+                <div className="relative bg-white text-[#1a1a1a] text-[15px] p-[13px_15px] rounded-lg leading-[1.55] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                  <div className="text-sm font-semibold text-[#07c160] mb-2">{'\u{2705}'} 已获取最新 AI 行业资讯</div>
+                  <div className="space-y-2">
+                    <div className="bg-[#f7f7f7] rounded-lg p-2.5 border border-black/[0.04]">
+                      <div className="font-semibold text-[14px]">英伟达发布 Blackwell Ultra GPU</div>
+                      <div className="text-[12px] text-[#888] mt-0.5">训练性能提升 40%，推理吞吐提升 2 倍，Q3 量产</div>
+                    </div>
+                    <div className="bg-[#f7f7f7] rounded-lg p-2.5 border border-black/[0.04]">
+                      <div className="font-semibold text-[14px]">AI Agent 赛道融资升温</div>
+                      <div className="text-[12px] text-[#888] mt-0.5">3 家头部企业级 Agent 公司获超 10 亿融资</div>
+                    </div>
+                    <div className="bg-[#f7f7f7] rounded-lg p-2.5 border border-black/[0.04]">
+                      <div className="font-semibold text-[14px]">Claude 开源 MCP 协议规范</div>
+                      <div className="text-[12px] text-[#888] mt-0.5">MCP 工具生态进一步扩大</div>
+                    </div>
+                  </div>
+                  <div className="mt-2.5 p-2 bg-[#f0fdf4] border border-[#07c160]/20 rounded-lg">
+                    <div className="text-[9px] font-semibold text-[#07c160]/60 uppercase tracking-[0.5px] flex items-center gap-1 mb-1">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#07c160" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 本次调用的工具
+                    </div>
+                    <div className="flex items-center gap-2 text-[12px] font-mono">
+                      <span className="px-2 py-0.5 rounded bg-[#07c160]/10 text-[#07c160] font-bold">{'\u{1F4E1}'} 资讯订阅</span>
+                      <span className="text-black/[0.15]">→</span>
+                      <span className="px-2 py-0.5 rounded bg-black/[0.04] text-[#555]">fetch_rss</span>
+                      <span className="text-black/[0.2] text-[11px]">· url: ai/news · limit: 3</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {scene === 'search' && !typing && (
+            <div className="flex gap-2.5 items-start">
+              <div className="w-[42px] h-[42px] rounded-lg bg-[#ef4545] shrink-0 flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(239,69,68,0.25)]">
+                <div className="w-[9px] h-[9px] bg-white rounded-full" />
+                <div className="w-[9px] h-[9px] bg-white rounded-full" />
+              </div>
+              <div className="max-w-[82%]">
+                <div className="relative bg-white text-[#1a1a1a] text-[15px] p-[13px_15px] rounded-lg leading-[1.55] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                  <div className="text-sm font-semibold text-[#07c160] mb-2">{'\u{2705}'} 已查到深圳周末天气</div>
+                  <div className="bg-[#f7f7f7] rounded-lg p-3 text-sm border border-black/[0.04]">
+                    <div className="text-center mb-2">
+                      <span className="text-[28px]">{'\u{2600}\u{FE0F}'}</span>
+                      <div className="text-[24px] font-bold mt-1">32° / 26°</div>
+                    </div>
+                    <div className="space-y-1.5 text-[13px]">
+                      <div className="flex justify-between"><span className="text-[#888]">周六 (7/25)</span><span>晴间多云 ☀️ 31°/26°</span></div>
+                      <div className="flex justify-between"><span className="text-[#888]">周日 (7/26)</span><span>多云转阵雨 ⛅ 30°/25°</span></div>
+                    </div>
+                    <div className="mt-2 pt-2 text-[12px] text-[#888] border-t border-dashed border-black/[0.06]">建议：周六适合户外活动，周日下午可能有雨</div>
+                  </div>
+                  <div className="mt-2.5 p-2 bg-[#f0fdf4] border border-[#07c160]/20 rounded-lg">
+                    <div className="text-[9px] font-semibold text-[#07c160]/60 uppercase tracking-[0.5px] flex items-center gap-1 mb-1">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#07c160" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 本次调用的工具
+                    </div>
+                    <div className="flex items-center gap-2 text-[12px] font-mono">
+                      <span className="px-2 py-0.5 rounded bg-[#07c160]/10 text-[#07c160] font-bold">{'\u{1F50D}'} 网页搜索</span>
+                      <span className="text-black/[0.15]">→</span>
+                      <span className="px-2 py-0.5 rounded bg-black/[0.04] text-[#555]">web_search</span>
+                      <span className="text-black/[0.2] text-[11px]">· query: 深圳周末天气</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="h-14 bg-[#f7f7f7] border-t border-black/[0.06] flex items-center px-3 gap-2.5 shrink-0">
+          <svg viewBox="0 0 24 24" width="26" height="26" stroke="#1a1a1a" strokeWidth="1.8" fill="none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <div className="flex-1 h-10 bg-white rounded-md flex items-center px-3 text-[#1a1a1a] text-[15px] border border-black/[0.08]" />
+          <svg viewBox="0 0 256 256" width="24" height="24" fill="none" stroke="#1a1a1a" strokeWidth="16"><circle cx="128" cy="128" r="40"/><path d="M128 80v-8M128 184v-8M80 128h-8M184 128h-8"/></svg>
+          <div className="w-[30px] h-[30px] rounded-full border-[1.5px] border-[#1a1a1a] flex items-center justify-center text-[#1a1a1a] font-bold text-base shrink-0">＋</div>
+        </div>
+        <div className="h-[22px] bg-[#f7f7f7] flex justify-center items-end pb-1.5 shrink-0">
+          <div className="w-[130px] h-[5px] bg-black rounded-[100px]" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* Map tabId to mock page component */
 const MOCK_PAGES = {
   welcome: WelcomePage,
@@ -897,12 +1163,13 @@ const MOCK_PAGES = {
   moments: MomentsPage,
   oa: OAPage,
   logs: LogsPage,
+  mcp: MCPPage,
 }
 
 const TAB_LABELS = {
   welcome: '欢迎', dashboard: '运行状态', config: '系统配置', push: '微信推送', assistant: '群聊助手',
   agent: 'AI Agent',
-  chats: '会话管理', favorites: '收藏助手', moments: '朋友圈助手', oa: '公众号助手', logs: '运行日志',
+  chats: '会话管理', favorites: '收藏助手', moments: '朋友圈助手', oa: '公众号助手', logs: '运行日志', mcp: 'MCP 工具',
 }
 
 /* ───────────────────────────────────────────────

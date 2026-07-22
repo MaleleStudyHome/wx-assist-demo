@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Gear, ChartLine, Scroll, Spinner, Sun, Moon, ChatCircleDots, Star, Eye, Newspaper, Chats, PaperPlaneTilt, List, X, Lightning } from '@phosphor-icons/react'
+import { Gear, ChartLine, Scroll, Spinner, Sun, Moon, ChatCircleDots, Star, Eye, Newspaper, Chats, PaperPlaneTilt, List, X, Lightning, PuzzlePiece } from '@phosphor-icons/react'
 import { API_BASE } from './components/SharedComponents'
 import Dashboard from './components/Dashboard'
 import ConfigPanel from './components/ConfigPanel'
@@ -12,6 +12,7 @@ import MomentsTab from './components/MomentsTab'
 import OATab from './components/OATab'
 import ChatTab from './components/ChatTab'
 import AgentPanel from './components/AgentPanel'
+import MCPTab from './components/MCPTab'
 import FeatureGuide from './components/FeatureGuide'
 import { AmbientWaveBackground } from './components/AmbientBackground'
 
@@ -35,6 +36,7 @@ const TABS = [
   { id: 'favorites', label: '收藏助手', icon: Star },
   { id: 'moments', label: '朋友圈助手', icon: Eye },
   { id: 'oa', label: '公众号助手', icon: Newspaper },
+  { id: 'mcp', label: 'MCP 工具', icon: PuzzlePiece },
   { id: 'logs', label: '运行日志', icon: Scroll },
 ]
 
@@ -253,6 +255,7 @@ export default function App() {
                 {activeTab === 'favorites' && <FavoritesTab />}
                 {activeTab === 'moments' && <MomentsTab />}
                 {activeTab === 'oa' && <OATab />}
+                {activeTab === 'mcp' && <MCPTab />}
                 {activeTab === 'logs' && <LogViewer />}
               </motion.div>
             </AnimatePresence>

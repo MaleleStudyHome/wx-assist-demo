@@ -22,6 +22,7 @@ const features = [
   { icon: '⚡', title: 'AI Agent', desc: '一句话自动执行 + RAG 语义检索' },
   { icon: '📰', title: '公众号摘要', desc: '按分组定时汇总' },
   { icon: '⭐', title: '收藏导出', desc: '标签筛选 + 全文搜索 + 一键导出' },
+  { icon: '🧩', title: 'MCP 工具', desc: '文件读写 + RSS 订阅 + 网络搜索，即插即用' },
 ]
 
 const PROVIDER_CONFIG = {
