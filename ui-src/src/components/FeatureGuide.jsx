@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChartLine, Gear, ChatCircleDots, Chats, Star, Eye, Newspaper, Scroll,
@@ -470,7 +470,7 @@ function PushPage() {
       </div>
 
       {/* Phone frame — light mode */}
-      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
+      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[480px] md:h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
         <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-[16px] z-[100]" />
         <div className="h-12 px-7 pt-4 flex justify-between text-[#1a1a1a] text-[15px] font-semibold shrink-0 z-50">
           <span>15:42</span><span className="text-xs">5G 88</span>
@@ -642,7 +642,7 @@ function AgentPage() {
           <p className="text-[11px] text-text-muted leading-relaxed mb-3">
             Agent 不是一个独立功能——绑了微信、配了 AI，它就能调用<strong className="text-text-main">所有已配置的能力</strong>。说一句话，自动执行。
           </p>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 md:flex hidden">
             <div className="flex items-center gap-2 p-2.5 bg-brand-green/5 rounded-lg text-xs border border-brand-green/10">
               <span className="text-sm">✅</span>
               <div><span className="text-text-main font-medium">已绑定微信</span><br /><span className="text-text-muted">结果可推送到手机</span></div>
@@ -653,9 +653,9 @@ function AgentPage() {
             </div>
           </div>
         </div>
-        <div className="bg-bg-card border border-border-main rounded-[14px] p-3.5">
-          <div className="text-[13px] font-bold mb-2 flex items-center gap-1.5">
-            <span className="text-base">💡</span>
+        <div className="bg-amber-500/5 border border-amber-500/15 rounded-[14px] p-3.5 border-l-2 border-l-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.08)]">
+          <div className="text-[13px] font-bold mb-2 flex items-center gap-1.5 text-amber-500">
+            <span className="text-base inline-block animate-bounce">💡</span>
             点击试试看
           </div>
           <p className="text-[11px] text-text-muted leading-relaxed">
@@ -671,7 +671,7 @@ function AgentPage() {
       </div>
 
       {/* Right: Phone frame — interactive */}
-      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
+      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[480px] md:h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
         <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-[16px] z-[100]" />
         <div className="h-12 px-7 pt-4 flex justify-between text-[#1a1a1a] text-[15px] font-semibold shrink-0 z-50">
           <span>15:42</span>
@@ -723,15 +723,15 @@ function AgentPage() {
                 </div>
               </div>
               <div className="flex flex-col gap-2 mt-2 px-1">
-                <button onClick={() => handleClick('digest')} className={btnClass('digest')}>
+                <button id="agent-scene-digest" onClick={() => handleClick('digest')} className={btnClass('digest')}>
                   <span>📝</span>
                   <span>帮我总结一下工作群今天都说了什么</span>
                 </button>
-                <button onClick={() => handleClick('alert')} className={btnClass('alert')}>
+                <button id="agent-scene-alert" onClick={() => handleClick('alert')} className={btnClass('alert')}>
                   <span>🔔</span>
                   <span>帮我设置 36氪 的文章实时提醒</span>
                 </button>
-                <button onClick={() => handleClick('fav')} className={btnClass('fav')}>
+                <button id="agent-scene-fav" onClick={() => handleClick('fav')} className={btnClass('fav')}>
                   <span>🔍</span>
                   <span>帮我找出金融知识相关收藏内容</span>
                 </button>
@@ -929,7 +929,7 @@ function MCPPage() {
           <p className="text-[11px] text-text-muted leading-relaxed mb-3">
             MCP 让 Agent 获得调用外部工具的能力——读取文件、订阅资讯、网络搜索，持续扩展。
           </p>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 md:flex hidden">
             <div className="flex items-center gap-2 p-2.5 bg-brand-green/5 rounded-lg text-xs border border-brand-green/10">
               <PuzzlePiece size={14} className="text-brand-green" />
               <div><span className="text-text-main font-medium">即插即用</span><br /><span className="text-text-muted">按需添加 MCP 服务器</span></div>
@@ -940,8 +940,8 @@ function MCPPage() {
             </div>
           </div>
         </div>
-        <div className="bg-bg-card border border-border-main rounded-[14px] p-3.5">
-          <div className="text-[13px] font-bold mb-2">选择场景体验</div>
+        <div className="bg-amber-500/5 border border-amber-500/15 rounded-[14px] p-3.5 border-l-2 border-l-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.08)]">
+          <div className="text-[13px] font-bold mb-2 text-amber-500"><span className="inline-block animate-bounce">💡</span> 选择场景体验</div>
           <p className="text-[11px] text-text-muted leading-relaxed mb-2">点击下方场景，查看 Agent 如何调用 MCP 工具</p>
           {(scene || typing) && (
             <button onClick={reset}
@@ -949,7 +949,7 @@ function MCPPage() {
           )}
         </div>
       </div>
-      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
+      <div className="w-full max-w-[360px] mx-auto md:mx-0 h-[480px] md:h-[640px] bg-[#ededed] rounded-[44px] relative flex flex-col overflow-hidden border-[5px] border-[#1a1a1a] shrink-0" style={{ boxShadow: '0 30px 70px -10px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)' }}>
         <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-[16px] z-[100]" />
         <div className="h-12 px-7 pt-4 flex justify-between text-[#1a1a1a] text-[15px] font-semibold shrink-0 z-50">
           <span>15:42</span>
@@ -987,15 +987,15 @@ function MCPPage() {
                 </div>
               </div>
               <div className="flex flex-col gap-2 mt-2 px-1">
-                <button onClick={() => handleClick('file')} className={btnClass('file')}>
+                <button id="mcp-scene-file" onClick={() => handleClick('file')} className={btnClass('file')}>
                   <span style={{fontSize:'11px',fontWeight:700,color:'#07c160'}}>文件</span>
                   <span>读取桌面上的会议记录文件</span>
                 </button>
-                <button onClick={() => handleClick('rss')} className={btnClass('rss')}>
+                <button id="mcp-scene-rss" onClick={() => handleClick('rss')} className={btnClass('rss')}>
                   <span style={{fontSize:'11px',fontWeight:700,color:'#07c160'}}>订阅</span>
                   <span>订阅 AI 行业的最新资讯</span>
                 </button>
-                <button onClick={() => handleClick('search')} className={btnClass('search')}>
+                <button id="mcp-scene-search" onClick={() => handleClick('search')} className={btnClass('search')}>
                   <span style={{fontSize:'11px',fontWeight:700,color:'#07c160'}}>天气</span>
                   <span>查一下这周末深圳的天气情况</span>
                 </button>
@@ -1362,159 +1362,229 @@ function MomentsDrawerMessages() {
    Guide Card (responsive: mobile bottom-full-width, desktop positioned)
    ─────────────────────────────────────────────── */
 
-function GuideCard({ step, stepIndex, totalSteps, onPrev, onNext, onSkip, onGoToStep }) {
+function GuideCard({ step, stepIndex, totalSteps, onPrev, onNext, onSkip, onGoToStep, drawerType, onOpenDrawer, isMobile }) {
   const isLast = stepIndex === totalSteps - 1
   const isFirst = stepIndex === 0
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  const [expanded, setExpanded] = useState(true)
+  const expandedRef = useRef(true)
 
+  // Mobile: scroll to top + show card on step change
+  useLayoutEffect(() => {
+    if (!isMobile) return
+    window.scrollTo(0, 0)
+    setExpanded(true)
+    expandedRef.current = true
+  }, [stepIndex, isMobile])
+
+  // Mobile: collapse when drawer opens
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
-    const handler = (e) => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
+    if (isMobile && drawerType) { setExpanded(false); expandedRef.current = false }
+  }, [drawerType, isMobile])
+
+  // Mobile: persistent scroll handler using ref (avoids stale closure on step change)
+  useEffect(() => {
+    if (!isMobile) return
+    const onScroll = () => {
+      if (expandedRef.current && window.scrollY > 3) {
+        expandedRef.current = false
+        setExpanded(false)
+      }
+    }
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [isMobile])
 
   const cardPosStyle = isMobile
     ? MOBILE_CARD_POS
     : (DESKTOP_CARD_POS[stepIndex] || DESKTOP_CARD_POS[0])
 
+  // ── Desktop: original, no changes ──
+  if (!isMobile) {
+    return (
+      <motion.div
+        key={`card-${stepIndex}`}
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="rounded-[20px] overflow-hidden absolute pointer-events-auto w-[340px]"
+        style={{
+          ...cardPosStyle,
+          background: 'var(--guide-bg, rgba(10,10,10,0.5))',
+          WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          backdropFilter: 'blur(28px) saturate(180%)',
+          border: '1px solid var(--guide-border, rgba(255,255,255,0.1))',
+          boxShadow: 'var(--guide-shadow, 0 24px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(24,226,153,0.06), inset 0 1px 0 rgba(255,255,255,0.06))',
+          transition: 'top 0.5s cubic-bezier(0.16,1,0.3,1), left 0.5s cubic-bezier(0.16,1,0.3,1), bottom 0.5s cubic-bezier(0.16,1,0.3,1), right 0.5s cubic-bezier(0.16,1,0.3,1)',
+        }}
+      >
+        <div className="h-[2px] bg-bg-inset">
+          <div className="h-full bg-gradient-to-r from-brand-green to-brand-green-hover rounded-sm transition-all duration-400"
+            style={{ width: `${((stepIndex + 1) / totalSteps) * 100}%`, transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }} />
+        </div>
+        <button onClick={onSkip}
+          className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full border border-border-main flex items-center justify-center text-text-muted hover:text-text-main hover:bg-bg-raised transition-colors z-10 cursor-pointer bg-transparent"
+          title="跳过引导"><X size={14} /></button>
+        <div className="p-6 pb-3">
+          <div className="flex items-center gap-1.5 mb-4">
+            {GUIDE_STEPS.map((_, i) => (
+              <button key={i} onClick={() => onGoToStep(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer border-none ${i === stepIndex ? 'w-[22px] bg-brand-green' : 'w-1.5 bg-border-strong hover:bg-white/25'}`} />
+            ))}
+          </div>
+          <motion.div key={`content-${stepIndex}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
+            {isFirst && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-brand-green-light border border-brand-green/20 text-brand-green mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-green relative">
+                  <span className="absolute inset-0 rounded-full bg-brand-green animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] opacity-60" />
+                </span>
+                首次启动
+              </div>
+            )}
+            <div className="w-12 h-12 rounded-[14px] bg-brand-green-light border border-brand-green/15 flex items-center justify-center mb-4">
+              <step.icon size={24} weight="regular" className="text-brand-green" />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-base font-semibold text-text-main">{step.title}</div>
+              <div className="text-[11px] font-mono text-text-muted font-medium">{stepIndex + 1} / {totalSteps}</div>
+            </div>
+            <div className="text-[13px] text-text-muted leading-relaxed mt-1.5 mb-4">{step.desc}</div>
+            {step.features.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-5">
+                {step.features.map((f, i) => {
+                  const isHot = (step.drawer && i === 0) || (step.tabId === 'config' && i === 0)
+                  return (
+                    <div key={i}
+                      className={`inline-flex items-center gap-[5px] px-2.5 py-1 rounded-full text-[11px] font-medium border ${
+                        isHot ? 'bg-brand-green-light border-brand-green/20 text-brand-green font-semibold' : 'bg-bg-raised border-border-main text-text-muted'
+                      }`}>
+                      <span className="w-1 h-1 rounded-full bg-brand-green flex-shrink-0" />{f}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </motion.div>
+        </div>
+        <div className="flex items-center gap-2.5 px-6 py-4 border-t border-border-main">
+          <button onClick={onSkip} className="bg-transparent text-text-muted text-[11px] py-2 px-0 cursor-pointer border-none hover:text-text-main font-sans">跳过</button>
+          {!isFirst && (
+            <button onClick={onPrev}
+              className="py-2 px-5 rounded-full text-[13px] font-semibold cursor-pointer bg-transparent text-text-muted border border-border-main hover:text-text-main hover:border-white/15 transition-colors font-sans">上一步</button>
+          )}
+          <button onClick={onNext}
+            className="flex-1 py-2 px-5 rounded-full text-[13px] font-semibold cursor-pointer border-none transition-opacity hover:opacity-90 active:scale-[0.97] font-sans"
+            style={{ background: isLast ? 'var(--brand-green)' : 'var(--brand-green-hover)', color: isLast ? '#0a0a0a' : 'white' }}>
+            {isLast ? '开始使用' : '下一步'}
+          </button>
+        </div>
+      </motion.div>
+    )
+  }
+
+  // ── Mobile: auto-hide badge ──
+  if (!expanded) {
+    return (
+      <motion.button
+        key={`badge-${stepIndex}`}
+        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        whileHover={{ scale: 1.08 }}
+        onClick={() => setExpanded(true)}
+        className="fixed bottom-6 right-6 z-[90] w-12 h-12 rounded-full flex items-center justify-center cursor-pointer border-none pointer-events-auto shadow-lg"
+        style={{ background: 'var(--brand-green)' }}
+        title={step.title}
+      >
+        <step.icon size={20} weight="fill" style={{ color: isLast ? '#0a0a0a' : '#fff' }} />
+      </motion.button>
+    )
+  }
+
+  // ── Mobile: expanded card with backdrop overlay ──
   return (
-    <motion.div
-      key={`card-${stepIndex}`}
-      initial={{ opacity: 0, y: isMobile ? 40 : 20, scale: isMobile ? 1 : 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+    <>
+      {/* Backdrop overlay — captures outside clicks, no stale-DOM issue */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed inset-0 z-[89]"
+        onClick={() => { setExpanded(false); expandedRef.current = false }}
+      />
+      <motion.div
+        key={`card-${stepIndex}`}
+        data-guide-card
+        initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className={`rounded-[20px] overflow-hidden absolute pointer-events-auto ${isMobile ? 'w-full rounded-b-none' : 'w-[340px]'}`}
+      className="fixed bottom-0 left-0 right-0 z-[90] w-full rounded-t-[20px] overflow-hidden pointer-events-auto"
       style={{
-        ...cardPosStyle,
         background: 'var(--guide-bg, rgba(10,10,10,0.5))',
         WebkitBackdropFilter: 'blur(28px) saturate(180%)',
         backdropFilter: 'blur(28px) saturate(180%)',
-        border: isMobile ? 'none' : '1px solid var(--guide-border, rgba(255,255,255,0.1))',
-        borderBottom: isMobile ? 'none' : undefined,
-        boxShadow: 'var(--guide-shadow, 0 24px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(24,226,153,0.06), inset 0 1px 0 rgba(255,255,255,0.06))',
-        transition: 'top 0.5s cubic-bezier(0.16,1,0.3,1), left 0.5s cubic-bezier(0.16,1,0.3,1), bottom 0.5s cubic-bezier(0.16,1,0.3,1), right 0.5s cubic-bezier(0.16,1,0.3,1)',
+        boxShadow: '0 -4px 30px rgba(0,0,0,0.3)',
       }}
     >
-      {/* Progress bar */}
+      {/* Progress */}
       <div className="h-[2px] bg-bg-inset">
-        <div
-          className="h-full bg-gradient-to-r from-brand-green to-brand-green-hover rounded-sm transition-all duration-400"
-          style={{ width: `${((stepIndex + 1) / totalSteps) * 100}%`, transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}
-        />
+        <div className="h-full bg-brand-green rounded-sm transition-all" style={{ width: `${((stepIndex + 1) / totalSteps) * 100}%` }} />
       </div>
 
-      {/* Close button */}
-      <button
-        onClick={onSkip}
-        className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full border border-border-main flex items-center justify-center text-text-muted hover:text-text-main hover:bg-bg-raised transition-colors z-10 cursor-pointer bg-transparent"
-        title="跳过引导"
-      >
-        <X size={14} />
-      </button>
-
       {/* Content */}
-      <div className="p-6 pb-3">
-        {/* Step indicators */}
-        <div className="flex items-center gap-1.5 mb-4">
+      <div className="p-4 pb-2">
+        <div className="flex items-center gap-1.5 mb-2">
           {GUIDE_STEPS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => onGoToStep(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer border-none ${
-                i === stepIndex
-                  ? 'w-[22px] bg-brand-green'
-                  : 'w-1.5 bg-border-strong hover:bg-white/25'
-              }`}
-            />
+            <button key={i} onClick={() => onGoToStep(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer border-none ${i === stepIndex ? 'w-[18px] bg-brand-green' : 'w-1.5 bg-border-strong'}`} />
           ))}
         </div>
 
-        {/* Step content with animation */}
-        <motion.div
-          key={`step-content-${stepIndex}`}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {isFirst && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-brand-green-light border border-brand-green/20 text-brand-green mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-green relative">
-                <span className="absolute inset-0 rounded-full bg-brand-green animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] opacity-60" />
-              </span>
-              首次启动
-            </div>
-          )}
-
-          {/* Icon */}
-          <div className="w-12 h-12 rounded-[14px] bg-brand-green-light border border-brand-green/15 flex items-center justify-center mb-4">
-            <step.icon size={24} weight="regular" className="text-brand-green" />
+        <div className="flex items-start gap-2.5">
+          <div className="w-8 h-8 rounded-[10px] bg-brand-green-light border border-brand-green/15 flex items-center justify-center shrink-0 mt-0.5">
+            <step.icon size={16} weight="regular" className="text-brand-green" />
           </div>
-
-          {/* Title + counter */}
-          <div className="flex items-center justify-between">
-            <div className="text-base font-semibold text-text-main">{step.title}</div>
-            <div className="text-[11px] font-mono text-text-muted font-medium">{stepIndex + 1} / {totalSteps}</div>
-          </div>
-
-          {/* Description */}
-          <div className="text-[13px] text-text-muted leading-relaxed mt-1.5 mb-4">{step.desc}</div>
-
-          {/* Feature chips */}
-          {step.features.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-5">
-              {step.features.map((f, i) => {
-                const isHot = (step.drawer && i === 0) || (step.tabId === 'config' && i === 0)
-                return (
-                  <div
-                    key={i}
-                    className={`inline-flex items-center gap-[5px] px-2.5 py-1 rounded-full text-[11px] font-medium border ${
-                      isHot
-                        ? 'bg-brand-green-light border-brand-green/20 text-brand-green font-semibold'
-                        : 'bg-bg-raised border-border-main text-text-muted'
-                    }`}
-                  >
-                    <span className="w-1 h-1 rounded-full bg-brand-green flex-shrink-0" />
-                    {f}
-                  </div>
-                )
-              })}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-semibold text-text-main">{step.title}</div>
+              <div className="text-[10px] font-mono text-text-muted shrink-0 ml-2">{stepIndex + 1}/{totalSteps}</div>
             </div>
-          )}
-        </motion.div>
+            <div className="text-[12px] text-text-muted leading-relaxed mt-0.5 line-clamp-2">{step.desc}</div>
+            {step.features.length > 0 && (
+              <div className="flex items-center gap-1 mt-1">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-brand-green-light border border-brand-green/20 text-brand-green">
+                  <span className="w-1 h-1 rounded-full bg-brand-green flex-shrink-0" />
+                  {step.features[0]}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-2.5 px-6 py-4 border-t border-border-main">
-        <button onClick={onSkip} className="bg-transparent text-text-muted text-[11px] py-2 px-0 cursor-pointer border-none hover:text-text-main font-sans">
-          跳过
-        </button>
+      {/* Actions — mobile: prev + next + collapse */}
+      <div className="flex items-center gap-2 px-4 pb-3">
+        <button onClick={() => setExpanded(false)} className="bg-transparent text-text-muted text-[10px] py-1.5 px-2 cursor-pointer border-none hover:text-text-main font-sans">收起</button>
         {!isFirst && (
-          <button
-            onClick={onPrev}
-            className="py-2 px-5 rounded-full text-[13px] font-semibold cursor-pointer bg-transparent text-text-muted border border-border-main hover:text-text-main hover:border-white/15 transition-colors font-sans"
-          >
-            上一步
-          </button>
+          <button onClick={onPrev} className="py-1.5 px-4 rounded-full text-[12px] font-semibold cursor-pointer bg-transparent text-text-muted border border-border-main hover:text-text-main hover:border-white/15 transition-colors font-sans">上一步</button>
         )}
-        <button
-          onClick={onNext}
-          className="flex-1 py-2 px-5 rounded-full text-[13px] font-semibold cursor-pointer border-none transition-opacity hover:opacity-90 active:scale-[0.97] font-sans"
-          style={{
-            background: isLast ? 'var(--brand-green)' : 'var(--brand-green-hover)',
-            color: isLast ? '#0a0a0a' : 'white',
-          }}
-        >
+        <button onClick={onNext}
+          className="flex-1 py-1.5 rounded-full text-[12px] font-semibold cursor-pointer border-none hover:opacity-90 font-sans"
+          style={{ background: isLast ? 'var(--brand-green)' : 'var(--brand-green-hover)', color: isLast ? '#0a0a0a' : 'white' }}>
           {isLast ? '开始使用' : '下一步'}
         </button>
       </div>
     </motion.div>
+    </>
   )
 }
 
 /* ───────────────────────────────────────────────
    Main FeatureGuide Component
    ─────────────────────────────────────────────── */
+
+/* ── Scroll-to-top on step change (mobile) ──────────── */
+function ScrollToTop({ step }) {
+  useEffect(() => { window.scrollTo(0, 0) }, [step])
+  return null
+}
 
 export default function FeatureGuide({ onTabChange, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0)
@@ -1576,14 +1646,14 @@ export default function FeatureGuide({ onTabChange, onComplete }) {
     return () => timers.forEach(clearTimeout)
   }, [currentStep, step.highlights])
 
-  // Drawer management
+  // Drawer management — on mobile, don't auto-open (user taps to open)
   useEffect(() => {
-    if (step.drawer) {
+    if (!isMobile && step.drawer) {
       setDrawerType(step.drawer)
-    } else {
+    } else if (!step.drawer) {
       setDrawerType(null)
     }
-  }, [currentStep, step.drawer])
+  }, [currentStep, step.drawer, isMobile])
 
   // Keyboard navigation
   useEffect(() => {
@@ -1668,6 +1738,58 @@ export default function FeatureGuide({ onTabChange, onComplete }) {
     onComplete()
   }, [onComplete])
 
+  // ── Green ring pulse on interactive scene buttons (all devices) ──
+  useEffect(() => {
+    const animEls = []
+    const addPulseRing = (el) => {
+      const anim = el.animate([
+        { boxShadow: '0 0 0 0 rgba(7,193,96,0.35)' },
+        { boxShadow: '0 0 0 10px rgba(7,193,96,0)' }
+      ], { duration: 2000, iterations: Infinity, easing: 'ease-in-out' })
+      animEls.push(anim)
+    }
+    ;['agent-scene-digest', 'agent-scene-alert', 'agent-scene-fav',
+      'mcp-scene-file', 'mcp-scene-rss', 'mcp-scene-search'].forEach(id => {
+      const el = document.getElementById(id)
+      if (el) addPulseRing(el)
+    })
+    return () => animEls.forEach(a => a.cancel())
+  }, [currentStep])
+
+  // ── Mobile: make AI dialog buttons functional + pulse ──
+  useEffect(() => {
+    if (!isMobile) return
+    const animEls = []
+    const addPulseRing = (el) => {
+      const anim = el.animate([
+        { boxShadow: '0 0 0 0 rgba(7,193,96,0.35)' },
+        { boxShadow: '0 0 0 10px rgba(7,193,96,0)' }
+      ], { duration: 2000, iterations: Infinity, easing: 'ease-in-out' })
+      animEls.push(anim)
+    }
+    // AI dialog buttons → make clickable + pulse
+    const drawerMap = {
+      'hl-ai-chat-btn': 'chat',
+      'hl-fav-ai': 'fav',
+      'hl-moments-ai': 'moments',
+    }
+    Object.keys(drawerMap).forEach(id => {
+      const el = document.getElementById(id)
+      if (el) {
+        el.onclick = () => setDrawerType(drawerMap[id])
+        el.style.cursor = 'pointer'
+        addPulseRing(el)
+      }
+    })
+    return () => {
+      Object.keys(drawerMap).forEach(id => {
+        const el = document.getElementById(id)
+        if (el) { el.onclick = null; el.style.cursor = '' }
+      })
+      animEls.forEach(a => a.cancel())
+    }
+  }, [currentStep, isMobile])
+
   // Render the mock page for current step
   const MockPage = MOCK_PAGES[step.tabId] || DashboardPage
 
@@ -1679,9 +1801,60 @@ export default function FeatureGuide({ onTabChange, onComplete }) {
           <h2 className="text-sm font-semibold tracking-tight text-text-main">{TAB_LABELS[step.tabId]}</h2>
         </div>
         <div className="p-4 md:p-8">
-          <MockPage />
+          {/* Mobile: swipeable page + dot indicators */}
+          {isMobile ? (
+            <div className="relative">
+              {/* Dot indicators */}
+              <div className="flex items-center justify-center gap-1.5 mb-4">
+                {GUIDE_STEPS.map((_, i) => (
+                  <button key={i} onClick={() => { if (i >= 0 && i < totalSteps) setCurrentStep(i) }}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer border-none ${
+                      i === currentStep ? 'w-[18px] bg-brand-green' : 'w-1.5 bg-border-strong'
+                    }`} />
+                ))}
+              </div>
+              {/* Swipeable mock page */}
+              <div className="relative">
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.15}
+                  onDragEnd={(_, info) => {
+                    const SWIPE_THRESHOLD = 50
+                    if (info.offset.x < -SWIPE_THRESHOLD && currentStep < totalSteps - 1) setCurrentStep(currentStep + 1)
+                    else if (info.offset.x > SWIPE_THRESHOLD && currentStep > 0) setCurrentStep(currentStep - 1)
+                  }}
+                  className="active:cursor-grabbing"
+                >
+                  <MockPage />
+                </motion.div>
+              </div>
+            </div>
+          ) : (
+            <MockPage />
+          )}
         </div>
       </div>
+
+      {/* Mobile: fixed navigation arrows — green, always visible */}
+      {isMobile && (
+        <>
+          {currentStep > 0 && (
+            <button onClick={prevStep}
+              className="fixed left-0 top-1/2 -translate-y-1/2 z-[85] w-10 h-20 rounded-r-xl flex items-center justify-center cursor-pointer border-none backdrop-blur-sm transition-all hover:w-12"
+              style={{ background: 'linear-gradient(90deg, rgba(7,193,96,0.2), transparent)', color: '#07c160' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+          )}
+          {currentStep < totalSteps - 1 && (
+            <button onClick={nextStep}
+              className="fixed right-0 top-1/2 -translate-y-1/2 z-[85] w-10 h-20 rounded-l-xl flex items-center justify-center cursor-pointer border-none backdrop-blur-sm transition-all hover:w-12"
+              style={{ background: 'linear-gradient(270deg, rgba(7,193,96,0.2), transparent)', color: '#07c160' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          )}
+        </>
+      )}
 
       {/* AI Chat Drawer */}
       <AnimatePresence>
@@ -1698,8 +1871,14 @@ export default function FeatureGuide({ onTabChange, onComplete }) {
           onNext={nextStep}
           onSkip={finish}
           onGoToStep={(i) => { if (i >= 0 && i < totalSteps) setCurrentStep(i) }}
+          drawerType={drawerType}
+          onOpenDrawer={() => step.drawer && setDrawerType(step.drawer)}
+          isMobile={isMobile}
         />
       </div>
+
+      {/* Mobile: scroll to top on step change — prevents scroll-triggered card collapse */}
+      {isMobile && <ScrollToTop step={currentStep} />}
     </>
   )
 }
